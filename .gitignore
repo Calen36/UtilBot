@@ -1,0 +1,5 @@
+/venv
+secr.json
+*.sqlite3
+*.db
+*.pyc

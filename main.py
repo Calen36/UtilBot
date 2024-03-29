@@ -1,6 +1,3 @@
-
-
-
 import asyncio
 import json
 import re
@@ -11,8 +8,10 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 
-with open('secr.json', 'r') as file:
-    TOKEN = json.load(file)['TOKEN']
+def get_token():
+    with open('secr.json', 'r') as file:
+        token = json.load(file)['TOKEN']
+    return token
 
 
 def correct_cad_num(cad_num: str) -> str:
@@ -46,20 +45,17 @@ def find_cad_nums(text: str):
 async def catch_cad_nums(message: types.Message):
     if not message.text:
         return
-    correct, bullshit, corrected = find_cad_nums(message.text)
+    correct, _bullshit, corrected = find_cad_nums(message.text)
     cad_nums = correct + list(corrected.values())
     if not cad_nums:
         await message.answer('Номеров не найдено')
         return
-    
     msg = "```" + '\n'.join(sorted(set(cad_nums))) + "```"
-
     await message.answer(msg, parse_mode='Markdown')
 
 
-
 async def main():
-    bot = Bot(token=TOKEN)
+    bot = Bot(token=get_token())
     dp = Dispatcher()
     dp.message.register(catch_cad_nums)
     try:
@@ -70,4 +66,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-    
